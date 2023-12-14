@@ -1,0 +1,6 @@
+fastapi
+python-dotenv
+pydantic-settings
+PyJWT
+uvicorn[standard]
+supabase
