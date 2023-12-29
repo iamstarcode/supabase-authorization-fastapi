@@ -4,7 +4,6 @@ from supabase.client import Client, ClientOptions
 from auth import validate_jwt
 from models.user import User
 
-
 from config import Settings
 
 settings = Settings()
