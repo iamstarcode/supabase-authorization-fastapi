@@ -1,6 +1,6 @@
 fastapi
+uvicorn[standard]
+supabase
 python-dotenv
 pydantic-settings
 PyJWT
-uvicorn[standard]
-supabase
