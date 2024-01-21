@@ -13,15 +13,16 @@ async def get_supabase_client(
     authorization: Annotated[str, Header()],
     user: Annotated[User, Depends(validate_jwt)],
 ) -> Client:
+    access_token = authorization.split(" ")[1]
     supabase = Client(
         settings.supabase_url,
         settings.supabase_key,
         options=ClientOptions(
             persist_session=False,
-            auto_refresh_token=False
-            # headers=({"Authorization": f"Bearer {access_token}"}),
+            auto_refresh_token=False,
+            headers=({"Authorization": f"Bearer {access_token}c"}),
         ),
     )
-    access_token = authorization.split(" ")[1]
-    supabase.auth.set_session(access_token, refresh_token="")
+
+    # supabase.auth.set_session(access_token, refresh_token="")
     return supabase

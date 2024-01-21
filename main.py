@@ -5,11 +5,27 @@ from pydantic import UUID4, BaseModel
 from typing_extensions import Annotated
 from supabase import Client
 
+from fastapi.middleware.cors import CORSMiddleware
+
+
 from libs.supabase import get_supabase_client
 from models.todo import Todo
 
 
+origins = [
+    "http://localhost:3000",
+]
+
+
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/todos")
@@ -26,7 +42,7 @@ async def get_todo_by_id(
     id: int, supabase: Annotated[Client, Depends(get_supabase_client)]
 ) -> Todo:
     todo = supabase.table("todos").select("*").eq("id", id).single().execute()
-    print(todo)
+
     return Todo(**todo.data)
 
 
