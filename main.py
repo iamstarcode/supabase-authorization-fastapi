@@ -1,7 +1,5 @@
-from datetime import date
-from typing import List, Union
+from typing import List
 from fastapi import FastAPI, Depends
-from pydantic import UUID4, BaseModel
 from typing_extensions import Annotated
 from supabase import Client
 
@@ -33,6 +31,7 @@ async def get_todos(
     supabase: Annotated[Client, Depends(get_supabase_client)]
 ) -> List[Todo]:
     todos = supabase.table("todos").select("*").execute()
+    print(todos, "dddd")
 
     return [Todo(**item) for item in todos.data]
 
