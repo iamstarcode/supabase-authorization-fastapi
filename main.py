@@ -31,7 +31,15 @@ async def get_todos(
     supabase: Annotated[Client, Depends(get_supabase_client)]
 ) -> List[Todo]:
     todos = supabase.table("todos").select("*").execute()
-    print(todos, "dddd")
+    # print(supabase.auth.get_session(), "dddd")
+
+    user = supabase.auth.get_user()
+    # print(user.user)
+    """ data, count = (
+        supabase.table("todos")
+        .insert({"user_id": user.user.id, "description": "Denmark"})
+        .execute()
+    ) """
 
     return [Todo(**item) for item in todos.data]
 
@@ -40,9 +48,11 @@ async def get_todos(
 async def get_todo_by_id(
     id: int, supabase: Annotated[Client, Depends(get_supabase_client)]
 ) -> Todo:
-    todo = supabase.table("todos").select("*").eq("id", id).single().execute()
+    data, count = supabase.table("todos").select("*").eq("id", id).single().execute()
 
-    return Todo(**todo.data)
+    print(data)
+
+    return Todo(**data)
 
 
 @app.post("/")
