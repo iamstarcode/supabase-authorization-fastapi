@@ -1,17 +1,18 @@
 from typing import List
-from fastapi import FastAPI, Depends
 from typing_extensions import Annotated
-from supabase import Client
 
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 
+from supabase import Client
 
 from libs.supabase import get_supabase_client
+from auth import validate_jwt
 from models.todo import Todo
 
 
 origins = [
-    "http://localhost:3000",
+    "http://127.0.0.1:3000",
 ]
 
 
@@ -26,6 +27,11 @@ app.add_middleware(
 )
 
 
+@app.get("/", dependencies=[Depends(validate_jwt)])
+async def home():
+    return {"msg": "Hello World!"}
+
+
 @app.get("/todos")
 async def get_todos(
     supabase: Annotated[Client, Depends(get_supabase_client)]
@@ -33,12 +39,3 @@ async def get_todos(
     todos = supabase.table("todos").select("*").execute()
 
     return [Todo(**item) for item in todos.data]
-
-
-@app.get("/todos/{id}")
-async def get_todo_by_id(
-    id: int, supabase: Annotated[Client, Depends(get_supabase_client)]
-) -> Todo:
-    todo = supabase.table("todos").select("*").eq("id", id).single().execute()
-
-    return Todo(**todo)
